@@ -1,0 +1,148 @@
+% File example.tex
+% Contact: simonnet@ecole.ensicaen.fr
+%
+% version 1.0 (July 24, 2009)
+% version 1.1 (September 3, 2009)
+% add using of the optional command: \secondauthoraddr
+
+\documentclass[10pt]{article}
+
+\input{../template/preamble.tex}
+
+%other package
+
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{times}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage[colorlinks=true, urlcolor=blue, linkcolor=black]{hyperref}
+
+\begin{document}
+\noindent
+
+% This should produce references in the order they appear
+\bibliographystyle{ieeetr}
+
+\title{TP ICD - Análise Estatística da Associação entre Financiamento Educacional, Ineficiência Escolar e Criminalidade no Brasil}
+
+\authorname{Gabriel R. Moura, Mateus M. T. Costa, Pedro R. F. de Aguiar, Renato V. M. P. Pinto}
+\authoraddr{Universidade Federal de Minas Gerais (UFMG) - Departamento de Ciência da Computação (DCC)}
+
+\maketitle
+
+\keywords
+Criminalidade, Financiamento Educacional, Testes de Permutação, Regressão Múltipla, Bootstrap, K-Means.
+
+\abstract
+Este estudo investiga a relação empírica entre os gastos estatais em educação, o desempenho de retenção escolar e as taxas de violência letal (CVLI) nos estados brasileiros. Como a natureza dos dados é observacional, a pesquisa não busca estabelecer relações causais estritas, mas sim identificar e quantificar associações estruturais robustas por meio de inferência estatística. Utilizando testes de hipótese, métodos de reamostragem (Bootstrap) para construção de Intervalos de Confiança, modelos preditivos de Regressão Múltipla e o modelo de classificação de K-Means, fizemos análises de comparação e agrupamento de Estados Brasileiros e estudos da associação de fatores educacionais com a criminalidade. Os resultados apontam que, estatisticamente, maiores aportes financeiros per capita e menores taxas de abandono escolar estão significativamente associados a menores índices de criminalidade letal.
+
+\section{Introdução}
+
+A formulação de políticas públicas baseadas em evidências exige uma transição de heurísticas sociológicas para validações estatísticas rigorosas. O presente projeto propõe uma exploração da interseção entre o aparato educacional estatal (mensurado sob as óticas de aporte financeiro e eficiência de fluxo escolar) e a incidência de criminalidade letal nas Unidades Federativas do Brasil (UF). 
+
+É imprescindível ressaltar que a complexidade do fenômeno da violência impede atribuições causais diretas a partir de dados puramente observacionais. Desse modo, nosso objetivo analítico é dimensionar o poder explicativo dessas covariáveis educacionais sobre a variância da criminalidade. Para nortear a investigação, formalizamos as seguintes Perguntas de Pesquisa:
+\begin{enumerate}
+    \item \textbf{Pergunta 1:} Como evoluíram as taxas de evasão escolar e de criminalidade ao longo dos anos nos diferentes estados brasileiros?
+    \item \textbf{Pergunta 2:} Existe diferença significativa na criminalidade letal entre os estados que mais investem em educação e os que menos investem?
+    \item \textbf{Pergunta 3:} Existe correlação entre o investimento financeiro estatal, a ineficiência escolar (reprovação/abandono) e a criminalidade?
+    \item \textbf{Pergunta 4:} É possível agrupar os Estados Brasileiros em perfis socioeconômicos para analisar semelhanças e diferenças nas tendências criminais e educacionais das UFs?
+\end{enumerate}
+
+\section{Metodologia}
+
+\subsection{Bases de Dados}
+A análise baseia-se na integração de dados públicos extraídos de instituições governamentais referentes a instâncias estaduais. As fontes incluem:
+\begin{itemize}
+    \item \textbf{\href{https://siconfi.tesouro.gov.br/siconfi/pages/public/consulta_finbra_rreo/finbra_rreo_list.jsf}{SICONFI - Tesouro Nacional}:} Despesas consolidadas estaduais na função Educação.
+    \item \textbf{Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira - } \textbf{\href{https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/indicadores-educacionais/taxas-de-rendimento-escolar}{INEP}:} Indicadores de fluxo escolar, com ênfase nas taxas de aprovação, reprovação e evasão (abandono) no Ensino Médio.
+    \item \textbf{\href{https://dados.mj.gov.br/dataset/sistema-nacional-de-estatisticas-de-seguranca-publica}{SINESP - Ministério da Justiça}:} Ocorrências criminais. Isolamos a métrica CVLI (Crimes Violentos Letais Intencionais: homicídios, latrocínios e lesões seguidas de morte) para evitar vieses de subnotificação e de crimes patrimoniais não violentos ligados a estados com maior densidade de riqueza urbana.
+    \item \textbf{Instituto Brasileiro de Geografia e Estatistica - } \textbf{\href{https://www.ibge.gov.br/}{IBGE}:} Estimativas populacionais para normalização.
+\end{itemize}
+
+\subsection{Fluxo de Trabalho e Tratamento Metodológico}
+Para garantir a equivalência paramétrica entre estados heterogêneos, converteu-se o financiamento bruto em Investimento por Aluno e as ocorrências criminais em taxas proporcionais (CVLI por 100 mil habitantes). Além disso, devido à disparidade da faixa de tempo disponível em cada Base, a leitura conjunta ficou restrita ao intervalo \textbf{2015-2022}.
+
+A \textbf{Pergunta 1} correspondeu ao processo de \textbf{Análise Experimental} que se deu por meio da montagem de gráficos e tratamento dos dados para os indíces de evasão escolar e de criminalidade de modo a perceber como os dados se comportavam e obter insigths iniciais.
+A \textbf{Pergunta 2} foi abordada via \textbf{Testes A/B}, dividindo os estados de acordo com a mediana de Investimento em Educação, construindo a distribuição nula com permutação, Intervalo de Confiança com Bootstrap e avaliando a significância da diferença das médias de criminalidade entre os grupos, com validação do poder estatístico ($1 - \beta$). A \textbf{Pergunta 3} consistiu na construção de uma \textbf{Regressão Linear Múltipla} otimizada por Gradiente Descendente. O treinamento incluiu transformações logarítmicas, diagnósticos de multicolinearidade (construção de matrizes de correlação) e \textbf{Validação Cruzada K-Fold}, garantindo a qualidade de generalização. A inferência paramétrica dos pesos $\theta$ e da qualidade do modelo mensurada pela métrica $R^{2}$ deu-se de forma empírica via \textbf{Bootstrap}. A \textbf{Pergunta 4}... [DESCREVA AQUI MINHA GENTE POGGERS]
+
+\subsection{Divisão de Tarefas}
+Além das atividades comuns para todos os membros do grupo, como a pesquisa das Bases de Dados e tratamento inicial, dividimos a execução da resolução das perguntas da seguinte forma:
+\begin{itemize}
+    \item \textbf{Gabriel:}
+    \item \textbf{Mateus:}  Implementação e análise da Pergunta 2 e construção dos Intervalos de Confiança paramêtricos para a Pergunta 3, além da validação cruzada analisada para a Regressão Múltipla.
+    \item \textbf{Pedro:}  Elaboração de determinados gráficos para Pergunta 1 e implementação do Pré-Processamento e da Regressão Múltipla da Pergunta 3.
+    \item \textbf{Renato:}
+\end{itemize}
+
+\section{Desenvolvimento}
+
+\subsection{Caracterização e Análise Exploratória dos Dados}
+[ANALISE EXPLORATORIA MUITO BACANA E INCRIVEL AQUI AMIGOS WOWWW]
+
+\subsection{Teste de Hipóteses (Pergunta 2: Efeito do Financiamento na Violência)}
+
+Para consulta da implementação e da visualização das distribuições construídas, acesse o arquivo \href{https://colab.research.google.com/drive/1dT2fBm92cKXEZFFhQeh7Xt-DvyE9x9aO#scrollTo=7e053f8b-1a88-4c0c-a0c7-7ba926015c9e}{Pergunta2.ipynb}.
+
+Para avaliar de forma probabilística se a disparidade de recursos per capita implica em reduções sistêmicas da letalidade criminal, segregamos a base de dados em dois subgrupos: Estados de Alto Investimento (acima da mediana): \textbf{Grupo A}; e Estados de Baixo Investimento (abaixo da mediana): \textbf{Grupo B}.
+
+A literatura sociológica e o senso comum sugerem que a precarização da educação piora a segurança. Logo, nossa pergunta não era apenas se os grupos eram "diferentes", mas especificamente se o Grupo B (baixo investimento) possuía uma taxa de criminalidade maior que o Grupo A. Formalizamos as hipóteses matematicamente como:
+\begin{itemize}
+    \item \textbf{Hipótese Nula ($H_{0}$):} $\mu_{B} - \mu_{A} = 0$
+    \item \textbf{Hipótese Alternativa ($H_{A}$):} $\mu_{B} - \mu_{A} > 0$
+\end{itemize}
+
+Sendo $\mu_{A} = \text{Média de CLVI do Grupo A}$ e $\mu_{B} = \text{Média de CLVI do Grupo B}$.
+
+Como métricas como CVLI e financiamento estatal raramente seguem distribuições normais perfeitas (\textit{outliers} e assimetria alta), além de maior coerência com o foco em abordagens computacionais da disciplina, adotou-se o \textbf{Teste de Permutação}, um método não-paramétrico de reamostragem sob a Hipótese Nula ($H_0$) de que os rótulos "Alto" e "Baixo" investimento não alteram a distribuição das taxas de criminalidade. Além disso, para construção do Intervalo de Confiança para a média de criminalidade, utilizamos outro método não-paramêtrico do \textbf{Bootstrap}.
+
+\paragraph{Resultados e Poder do Teste:}
+Os dados revelaram uma diferença média observada de 8.91 CVLIs por 100.000 habitantes em desfavor dos estados com menor investimento educacional. A metodologia empírica gerou um P-valor aproximado de $0.013$ ($1.33\%$). Sob o nível de significância crítico $\alpha = 0.05$, rejeitamos $H_0$ ($0.013 < 0.05$). Ou seja, com um nível de confiança de (95\%), os dados amostrais fornecem evidências suficientes para rejeitar a hipótese nula ($H_{0}$) em favor da hipótese alternativa ($H_{A}$), levando à conclução de que os estados brasileiros que aplicam menos recursos proporcionais na educação possuem taxas sistematicamente maiores de crimes letais. 
+
+Mais fundamental do que apontar a significância é avaliar a consistência deste teste. Computamos empiricamente o erro do Tipo II ($\beta$) observando a sobreposição do cenário nulo com a distribuição amostral simulada via Bootstrap. Obtivemos $\beta = 0.2563$. Logo, a \textbf{Força do Teste ($1 - \beta$) é estimada em $74.37\%$}. Considerando a magnitude da disparidade das ocorrências criminais letais associada ao baixo investimento em educação (diferença média observada de 8.91 e P-Valor de 1.33\%), se essa associação estrutural for a realidade do país, o nosso modelo possui 74.37\% de probabilidade de identificar essa deficiência socioeducacional com sucesso. Esse nível de poder estatístico (próximo à referência acadêmica comum de 80\%) indica que o teste tem uma sensibilidade robusta para detectar o efeito.
+
+\subsection{Modelagem de Regressão Múltipla (Pergunta 3: Financiamento, Ineficiência Escolar x Criminalidade) }
+
+Para consulta da implementação e da visualização do Modelo e dos resultados obtidos, acesse o arquivo \href{https://colab.research.google.com/drive/1pVdoor4xno_OC3BWHZh3yFA97_0DO5bY}{Pergunta3.ipynb}.
+
+Desenvolveu-se um modelo de Regressão Linear Múltipla, focado em mensurar simultaneamente os efeitos marginais isolados do \textit{Investimento por Aluno} ($X_1$) e das variáveis de ineficiência escolar \textit{Taxa de Abandono} ($X_2$) e \textit{Taxa de Reprovação} ($X_3$) sobre a criminalidade letal ($Y$). A função de custo (Erro Quadrático Médio) foi minimizada através do algoritmo de \textbf{Gradiente Descendente}.
+
+\paragraph{Engenharia de Atributos e Diagnóstico de Multicolinearidade:}
+A fase inicial da modelagem revelou a necessidade de ajustes algébricos e estatísticos vitais:
+\begin{enumerate}
+    \item \textit{Visualização de Não-Linearidade:} O gráfico de dispersão do Investimento revelou rendimentos marginais decrescentes. Aplicou-se a transformação $Log(X_1)$, melhorando o ajuste da reta ao espaço de atributos originais.
+    \item \textit{Rigor contra Multicolinearidade:} Uma observação superficial apontaria para a inclusão conjunta das variáveis de evasão e reprovação. Contudo, a matriz de correlação cruzada revelou que a Taxa de Reprovação possuía correlação desprezível com a variável alvo, CVLI ($\rho \approx 0.09$), e alta colinearidade (Pearson = $0.47$) com o Abandono. Na teoria de Regressão Múltipla, introduzir variáveis correlacionadas entre si (Multicolinearidade) e que não agregam poder explicativo ao alvo pode gerar instabilidade nos pesos do modelo e aumentar a variância sem ganho real de predição. Pelo Princípio da Parcimônia, optamos por remover a Taxa de Reprovação das modelagens seguintes, construindo um modelo mais simples, estável e interpretável focado apenas em Investimento e Abandono.
+\end{enumerate}
+
+\paragraph{Validação da Generalização (Prevenção de \textit{Data Leakage}):}
+Para avaliar o poder explicativo do modelo reduzido ($Y \sim \theta_0 + \theta_1 Log(Investimento) + \theta_2 Abandono$), aplicou-se a \textbf{Validação Cruzada Estratificada (5-Fold CV)}. 
+
+Em coerência aos preceitos estritos da aprendizagem de máquina estatística, a normalização dos dados (\textit{Z-Score}) foi processada de forma isolada nos dados de treino, isto é, média e desvio padrão foram computados exclusivamente nos dados do \textit{fold} de treinamento e posteriormente projetados sobre o teste. Esse rigor impediu o vazamento de informações (\textit{Data Leakage}). Obtivemos um $R^2$ médio de teste de $0.2175$ ($\pm 0.0615$), muito próximo ao de treino ($0.2407$), refutando a presença de superajuste (\textit{overfitting}) e atestando a capacidade de generalização da arquitetura estabelecida.
+
+\paragraph{Inferência por Bootstrap e Intervalos de Confiança:}
+Para inferência final, evitando o viés otimista que ocorreria caso selecionássemos arbitrariamente o "melhor" modelo do \textit{K-Fold}, o vetor paramétrico final foi treinado aproveitando a amostra agregada total. Empregou-se o \textbf{Bootstrap} (4.000 reamostragens com reposição) para estimar a densidade probabilística dos coeficientes.
+
+Os Intervalos de Confiança (IC a 95\%) revelaram as seguintes associações puras:
+\begin{itemize}
+    \item \textbf{Coef. Log(Investimento) IC:[-6.0029, -3.2036]:} Isso indica com robustez estatística que, independentemente da ineficiência escolar, maiores investimentos estatais por aluno estão diretamente associados a menores taxas de violência (CVLI). O sucesso da transformação logarítmica sugere ainda que a relação não é perfeitamente linear: os maiores impactos sociais e reduções de criminalidade ocorrem nos incrementos iniciais de investimento nos estados historicamente mais carentes.
+    \item \textbf{Coef. Abandono IC:[1.5027, 4.4105]:} Isso comprova matematicamente que a evasão escolar (o momento em que o jovem se desvincula do sistema educacional e fica desassistido pelo Estado) está de forma ativa e isolada relacionada com a escalada da violência.
+    \item \textbf{Qualidade de Ajuste ($R^2$) IC:[15,14\% a 33,86\%]:} Embora existam inúmeros outros fatores socioeconômicos que afetem a violência, provamos estatisticamente que apenas duas dimensões (financiamento e evasão escolar) são capazes de explicar, de forma consistente, cerca de um quinto a um terço de toda a variabilidade da criminalidade entre os estados, com 95\% de confiança.
+\end{itemize}
+
+\paragraph{Veredito:}
+Sim, a correlação existe e foi validada com rigor estatístico. Contudo, os dados revelam que "ineficiência escolar" não é um bloco homogêneo. As políticas públicas com maior potencial de retorno na segurança pública estadual devem focar em duas frentes simultâneas e independentes: a injeção bruta de recursos financeiros (Investimento per capita) e a criação de mecanismos de retenção para evitar a evasão (Abandono). O combate exclusivo à taxa de reprovação, isoladamente, mostrou-se estatisticamente irrelevante para a mitigação da criminalidade.
+
+\subsection{Modelo de Classificação/Clustering (Pergunta 4)}
+
+MAIS PAPINHO BLA BLAH
+
+\section{Conclusões}
+
+A investigação evidenciou de forma quantificável que o aparelho educacional atua fortemente na macroestrutura da segurança pública brasileira. Com resguardo da inferência não-causal decorrente de dados estritamente observacionais, foi possível validar estruturalmente a correlação proposta nas hipóteses iniciais.
+
+No âmbito financeiro, tanto os testes de hipóteses de permutação quanto a análise marginal da Regressão Múltipla convergem para o mesmo fato estatístico: a letalidade criminal apresenta redução considerável em cenários de aportes governamentais crescentes.
+
+Ademais, a decomposição empírica da ineficiência escolar forneceu um achado sociológico vital: o impacto pró-criminalidade reside especificamente na evasão escolar (Abandono). Os dados revelaram que a mera retenção do aluno na mesma série (Reprovação), desde que ele permaneça dentro da infraestrutura da escola, não é um motor significativo para a criminalidade.
+
+\end{document}
