@@ -70,7 +70,7 @@ A \textbf{Pergunta 2} foi abordada via \textbf{Testes A/B}, dividindo os estados
 \subsection{Divisão de Tarefas}
 Além das atividades comuns para todos os membros do grupo, como a pesquisa das Bases de Dados e tratamento inicial, dividimos a execução da resolução das perguntas da seguinte forma:
 \begin{itemize}
-    \item \textbf{Gabriel:}
+    \item \textbf{Gabriel:} Implementação e análise final da EDA, design inicial do processo de clusterização.
     \item \textbf{Mateus:}  Implementação e análise da Pergunta 2 e construção dos Intervalos de Confiança paramêtricos para a Pergunta 3, além da validação cruzada analisada para a Regressão Múltipla.
     \item \textbf{Pedro:}  Elaboração de determinados gráficos para Pergunta 1 e implementação do Pré-Processamento e da Regressão Múltipla da Pergunta 3.
     \item \textbf{Renato:}
@@ -79,7 +79,19 @@ Além das atividades comuns para todos os membros do grupo, como a pesquisa das 
 \section{Desenvolvimento}
 
 \subsection{Caracterização e Análise Exploratória dos Dados}
-[ANALISE EXPLORATORIA MUITO BACANA E INCRIVEL AQUI AMIGOS WOWWW]
+Para conseguirmos uma compreensão inicial dos dados, investigamos a evolução temporal das taxas de evasão escolar e de criminalidade letal nos estados brasileiros. 
+
+Como as Unidades Federativas possuem populações muito distintas, decidimos normalizar  as ocorrências criminais absolutas em taxas por 100 mil habitantes. Além disso, no quesito criminal, usamos como indicador a quantidade de \textbf{CVLIs} (Crimes Violentos Letais Intencionais), construída pela soma de homicídios dolosos, latrocínios e lesões corporais seguidas de morte, uma vez que isso reduz o peso de crimes patrimoniais e que, consequentemente, podem estar mais correlacionados a outros fatores, como urbanização, frota de veículos e nível de atividade econômica. Por fim, para a dimensão educacional, utilizamos a taxa de abandono no Ensino Médio, já que essa representa uma etapa crítica de permanência escolar e de transição para o mercado de trabalho. A comparação conjunta ficou restrita ao intervalo \textbf{2015-2022}, período comum entre as bases analisadas.
+
+A primeira leitura exploratória indicou queda agregada nos dois indicadores. A média estadual de CVLI passou de \textbf{31,37 crimes letais por 100 mil habitantes em 2015} para \textbf{24,24 em 2022}, redução de aproximadamente \textbf{22,7\%}. No mesmo período, a taxa média de abandono no Ensino Médio caiu de \textbf{9,72\%} para \textbf{6,84\%}, o que corresponde a uma redução aproximada de \textbf{29,7\%}. Portanto, no agregado nacional por UF, tanto a violência letal quanto a evasão escolar apresentaram melhora ao longo do tempo.
+
+Apesar dessa tendência geral de queda, o cenário não é homogêneo entre os estados. Na criminalidade, as maiores médias de CVLI entre 2015 e 2022 ocorreram no \textbf{Rio Grande do Norte (46,92)}, \textbf{Alagoas (43,80)}, \textbf{Sergipe (42,67)}, \textbf{Pernambuco (42,01)} e \textbf{Ceará (40,02)}. Os menores valores médios foram observados em \textbf{São Paulo (7,70)}, \textbf{Santa Catarina (10,40)}, \textbf{Minas Gerais (15,64)}, \textbf{Paraná (15,70)} e \textbf{Distrito Federal (16,05)}. Esses dados demonstram um possível componente regional na concentração de casos de violência letal, estando esses localizados especialmente em estados do Norte e do Nordeste.
+
+Na evasão escolar, também houve forte variação entre UFs. As maiores médias de abandono no Ensino Médio foram registradas no \textbf{Pará (12,62\%)}, \textbf{Rio Grande do Norte (9,93\%)}, \textbf{Paraíba (9,49\%)}, \textbf{Mato Grosso (9,30\%)} e \textbf{Alagoas (9,26\%)}. Por outro lado, os menores valores médios apareceram em \textbf{Pernambuco (1,49\%)}, \textbf{Espírito Santo (3,15\%)}, \textbf{Goiás (3,23\%)}, \textbf{São Paulo (3,30\%)} e \textbf{Distrito Federal (4,01\%)}. Assim como na criminalidade, a melhora agregada convive com desigualdades territoriais, e a questão regional se apresenta novamente.
+
+Por fim, comparamos as médias estaduais de abandono no Ensino Médio e de CVLI no período 2015-2022. A correlação encontrada foi de \textbf{$r = 0,34$}, indicando uma associação positiva moderada: estados com maior abandono escolar tendem, em média, a apresentar maior violência letal. No entanto, a dispersão entre os estados mostra que a criminalidade não pode ser explicada apenas pela evasão escolar. Fatores como desigualdade de renda, urbanização, capacidade institucional, políticas de segurança, mercado de trabalho e dinâmicas locais de violência também influenciam o fenômeno.
+
+Dessa forma, a resposta exploratória à Pergunta 1 é que as taxas de evasão escolar e de criminalidade letal caíram no agregado entre 2015 e 2022, mas de maneira desigual entre os estados. A relação entre abandono escolar e CVLI aparece como uma evidência estatística de associação, suficiente para orientar as análises posteriores, mas não como demonstração direta de causalidade.
 
 \subsection{Teste de Hipóteses (Pergunta 2: Efeito do Financiamento na Violência)}
 
